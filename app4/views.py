@@ -174,20 +174,23 @@ def crearUsuario(request):
         
         profesionUsuario=request.POST.get('profesionUsuario')
         nroCelularUsuario=request.POST.get('nroCelularUsuario')
-        perfilUsuario=request.POST.get('perfilUsuarioUsuario')
-        objuser=user.objects.create(
+        perfilUsuario=request.POST.get('perfilUsuario')
+        objuser=User.objects.create(
             username=usernameUsuario,
-            email=emailUsuario
-        )
-
-        objuserPass=user.objects.SET_PASSWORD(contraUsuario) 
-
-
-        datosUsuario.objects.create(
-                profesion=profesionUsuario,
-                nroCelular=nroCelularUsuario,
-                perfilUsuario=perfilUsuario,
-                usuarioRelacionado=objuser.id)
+            first_name=nombreUsuario,
+            last_name=apellidoUsuario,
+            email=emailUsuario)
+        objuser = User.objects.get(username=usernameUsuario)
+      
+        objuser.set_password(contraUsuario) 
+        objuser.save()
+    
+        
+        d1=datosUsuario.objects.create(
+            profesion=profesionUsuario,
+            nroCelular=nroCelularUsuario,
+            perfilUsuario=perfilUsuario,
+            usuarioRelacionado=objuser)
 
 
 
