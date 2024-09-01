@@ -21,5 +21,6 @@ urlpatterns = [
     #RUTA ACTUALIZARUSUARIO, OBTENERDATOSUSUARIO - EXAMEN FINAL
     path('obtenerDatosUsuario',views.obtenerDatosUsuario,name='obtenerDatosUsuario'),
     path('actualizarUsuario',views.actualizarUsuario,name='actualizarUsuario'),
-    path('crearUsuario',views.crearUsuario,name='crearUsuario')
+    path('crearUsuario',views.crearUsuario,name='crearUsuario'),
+    path('eliminarUsuario/<str:idUsuario>',views.eliminarUsuario,name='eliminarUsuario')
 ]

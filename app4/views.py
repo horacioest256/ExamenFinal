@@ -26,6 +26,7 @@ def ingresoUsuario(request):
     return render(request,'ingresoUsuario.html')
 
 @login_required(login_url='/')
+
 def informacionUsuario(request):
     allPubs = publicacion.objects.all().order_by('-id')
     return render(request,'informacionUsuario.html',{
@@ -165,16 +166,15 @@ def reactjs(request):
     return render(request,'react.html')
 
 def crearUsuario(request):
-    if request.method == 'POST':
         usernameUsuario = request.POST.get('usernameUsuario')
-        contraUsuario = request.POST.get('contraUsuario')
-        nombreUsuario=request.POST.get('nombreUsuario')
-        apellidoUsuario=request.POST.get('apellidoUsuario')
-        emailUsuario=request.POST.get('emailUsuario')
+        contraUsuario   = request.POST.get('contraUsuario')
+        nombreUsuario   = request.POST.get('nombreUsuario')
+        apellidoUsuario = request.POST.get('apellidoUsuario')
+        emailUsuario    = request.POST.get('emailUsuario')
         
-        profesionUsuario=request.POST.get('profesionUsuario')
+        profesionUsuario =request.POST.get('profesionUsuario')
         nroCelularUsuario=request.POST.get('nroCelularUsuario')
-        perfilUsuario=request.POST.get('perfilUsuario')
+        perfilUsuario    =request.POST.get('perfilUsuario')
         objuser=User.objects.create(
             username=usernameUsuario,
             first_name=nombreUsuario,
@@ -201,7 +201,7 @@ PREGUNTA 1 - B
 CREAR EL IF QUE PERMITA RECONOCER EL MÉTODO DE LA PETICION:
 IF REQUEST.METHOD == ....
 DENTRO DE LA SELECTIVA CAPTURAR LOS DATOS DEL FORMULARIO : 
-USERNAMEUSUARIO = REQUEST.POST.GET('USE ...
+ USERNAMEUSUARIO = REQUEST.POST.GET('USE ...
 ...
 
 CREAR EL OBJETO USER CON USERNAME E EMAIL : 
@@ -228,27 +228,81 @@ def consolaAdministrador(request):
     })
 
 
+
+
+
 def obtenerDatosUsuario(request):
     idUsuario = request.GET.get('idUsuario')
+    objUsr  = User.objects.get(id=idUsuario)
+    objid   = objUsr.id
+    objUsrDatos = datosUsuario.objects.get(usuarioRelacionado =objid)
+    
+
+    return JsonResponse({
+        'username': objUsr.username,
+        'contraUsuario': objUsr.password,
+        'emailUsuario': objUsr.email,
+        'nombreUsuario': objUsr.first_name,
+        'apellidoUsuario': objUsr.last_name,
+        'profesionUsuario': objUsrDatos.profesion,
+        'nroCelularUsuario': objUsrDatos.nroCelular,
+        'perfilUsuario': objUsrDatos.perfilUsuario,
+        'usuarioRelacionado': objUsr.id
+    })
+
+    
     """
     Pregunta 3
     Esta funcion devolvera los campos que se necesitan 
     cargar en la ventana modal para poder ser editados
     Con el id del usuario se puede obtener el objeto y devolver
     el objeto Json con la informacion necesaria.
-    """
+  
     return JsonResponse({
         'resp':'200'
     })
 
+    """
 def actualizarUsuario(request):
-    """
-    Pregunta 5
-    En esta funcion recibira los datos del formulario de actualizacion de usuario
-    Debe capturar dichos datos, recuerde que en el input con atributo name idUsuario
-    se ha cargado el id del usuario correspondiente lo que le permitira obtener el objeto
-    de la base de datos. Con el objeto capturado modificar los campos respectivos y finalmente
-    ejecutar el metodo save() para su respectiva actualizacion
-    """
+        username = request.GET.get('username')
+        contraUsuario   = request.GET.get('contraUsuario')
+        nombreUsuario   = request.GET.get('nombreUsuario')
+        apellidoUsuario = request.GET.get('apellidoUsuario')
+        emailUsuario    = request.GET.get('emailUsuario')
+        print(username)  
+        #user1=User.objects.filter(username=usernameUsuario)
+        #user1.first_name="EEEEEEE"
 
+        #.update(first_name=nombreUsuario,last_name=apellidoUsuario)
+        #user1.save()
+
+        profesionUsuario=request.GET.get('profesionUsuario')
+        nroCelularUsuario=request.GET.get('nroCelularUsuario')
+        perfilUsuario=request.GET.get('perfilUsuario')
+        
+        objuser = User.objects.get(username=username)
+        objId=objuser.id   
+   
+        #objuser.set_password(contraUsuario) 
+        #objuser.save()
+
+        objdatos=datosUsuario.objects.filter(usuarioRelacionado=objId).update(profesion=profesionUsuario, nroCelular=nroCelularUsuario, perfilUsuario=perfilUsuario)
+        #objdatos.save()
+        return HttpResponseRedirect(reverse('app4:consolaAdministrador'))
+    
+        """
+        Pregunta 5
+        En esta funcion recibira los datos del formulario de actualizacion de usuario
+        Debe capturar dichos datos, recuerde que en el input con atributo name idUsuario
+        se ha cargado el id del usuario correspondiente lo que le permitira obtener el objeto
+        de la base de datos. Con el objeto capturado modificar los campos respectivos y finalmente
+        ejecutar el metodo save() para su respectiva actualizacion
+        """
+
+
+
+def eliminarUsuario(request,idUsuario):
+    usuarioObj = User.objects.get(id=idUsuario)
+    usuarioObj.delete()
     return HttpResponseRedirect(reverse('app4:consolaAdministrador'))
+
