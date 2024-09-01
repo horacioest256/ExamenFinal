@@ -58,6 +58,7 @@
                             <th>Apellido</th>
                             <th>Numero de celular</th>
                             <th>Editar</th>
+                            <th>Borrar</th>
                         </thead>
                         <tbody>
                             {% for userInfo in allUsers %}
@@ -67,6 +68,7 @@
                                 <td>{{ userInfo.last_name }}</td>
                                 <td>{{ userInfo.datosusuario.nroCelular }}</td>
                                 <td class="text-center"><a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editarUsuario" id="{{ userInfo.id }}" onclick="cargarInformacionUsuario(this.id)"><i class="fa-solid fa-edit"></i></a></td>
+                                <td><a class="btn btn-danger" href="{% url 'app4:eliminarUsuario' userInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -161,20 +163,67 @@
 <div class="modal fade" id="editarUsuario" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="post" action="{% url 'app4:actualizarUsuario' %}">
-            {% csrf_token %}
+            <form method="GET" action="{% url 'app4:actualizarUsuario' %}">
+                {% csrf_token %}
                 <div class="modal-header">
                     <h5 class="modal-title">Editar usuario</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div style="display: none;">
-                    <input id="idUsuario" name="idUsuario" value="">
+                    
                 </div>
                 <div class="modal-body">
-                </div>
+                    <div class="row mb-2 mt-2">
+                        
+                    </div>
+                    <div class="row form-group justify-content-around mb-3">
+                        <div class="col-5">
+                            <label>Username :</label>
+                            <input class="form-control" type="text" readonly name="username" id="username"  >
+                           
+                       
+                        </div>
+                        <div class="col-5">
+                            <label>Password :</label>
+                            <input class="form-control" type="password" name="contraUsuario" id="contraUsuario"  >
+                        </div>
+                    </div>
+                    <div class="row form-group justify-content-around mb-3">
+                        <div class="col-5">
+                            <label>Nombre :</label>
+                            <input class="form-control" type="text" name="nombreUsuario" id="nombreUsuario"  >
+                        </div>
+                        <div class="col-5">
+                            <label>Apellido :</label>
+                            <input class="form-control" type="text" name="apellidoUsuario" id="apellidoUsuario"  >
+                        </div>
+                    </div>
+                    <div class="row form-group justify-content-around mb-3">
+                        <div class="col-5">
+                            <label>Profesion :</label>
+                            <input class="form-control" type="text" name="profesionUsuario" id="profesionUsuario"   >
+                        </div>
+                        <div class="col-5">
+                            <label>Email :</label>
+                            <input class="form-control" type="email" name="emailUsuario"  id="emailUsuario">
+                        </div>
+                    </div>
+                    <div class="row form-group justify-content-around mb-3">
+                        <div class="col-5">
+                            <label>Nro de celular :</label>
+                            <input class="form-control" type="text" name="nroCelularUsuario" id="nroCelularUsuario"  > 
+                        </div>
+                    </div>
+                    <div class="row form-group justify-content-around mb-3">
+                        <div class="col-11">
+                            <label>Perfil del usuario :</label>
+                            <textarea class="form-control" type="text" name="perfilUsuario" id="perfilUsuario" rows="4"  ></textarea>
+                        </div>
+                    </div>
+       
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Editar</button>
+                    <button type="submit" class="btn btn-primary">Grabar</button>
                 </div>
             </form>
         </div>

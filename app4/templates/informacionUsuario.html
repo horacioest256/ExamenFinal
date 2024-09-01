@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
         <!--Importar scripts de javascript-->
-        <script src="#"></script>
+        <script src="{% static 'js/informacionUsuario.js' %}"></script>
     </head>
     <body>
         <div class="bg-primary">
@@ -33,7 +33,7 @@
         </div>
         <div class="container mt-3 mb-3">
             <div>
-                <a href="#" class="btn btn-info">Panel de control <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="{% url 'app4:consolaAdministrador' %}" class="btn btn-info">Panel de control <i class="fa-solid fa-arrow-right"></i></a>
             </div>
         </div>
         <div class="mt-5 text-center mb-3">
@@ -116,15 +116,15 @@
             </div>
         </div>
         <div class="mt-5 text-center mb-3">
-            <h3>Tareas del usuario</h3>
+            <h3>Publicaciones del usuario</h3>
         </div>
         <div class="container mt-5">
             <div class="row justify-content-between">
                 <div class="col-2 text-start">
-                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#nuevaTarea"><i class="fa-solid fa-calendar-plus"></i> Nueva tarea</button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#nuevaTarea"><i class="fa-solid fa-calendar-plus"></i> Nuevo Tweet</button>
                 </div>
                 <div class="col-2 text-end">
-                    <a class="btn btn-success" href="#"><i class="fa-solid fa-download"></i> Descargar</a>
+                    <a class="btn btn-success" href="{% url 'app4:descargarReporte' %}"><i class="fa-solid fa-download"></i> Descargar</a>
                 </div>
             </div>
         </div>
@@ -133,22 +133,20 @@
                 <div class="col-8">
                     <table class="table table-bordered">
                         <thead class="table-dark">
-                            <th>Fecha de inicio</th>
-                            <th>Fecha de finalizacion</th>
-                            <th>Estado de la tarea</th>
-                            <th>Ver tarea</th>
-                            <th>Finalizar</th>
+                            <th>Autor</th>
+                            <th>Titulo</th>
+                            <th>Ver tweet</th>
                             <th>Eliminar</th>
                         </thead>
                         <tbody>
+                            {% for pubInfo in allPubs %}
                             <tr>
-                                <td>FECHA_TAREA</td>
-                                <td>FECHA_TAREA</td>
-                                <td>ESTADO_TAREA</td>
-                                <td><button data-bs-toggle="modal" data-bs-target="#detalleTarea" id="{{ tarea.id }}" class="btn btn-info"><i class="fa-solid fa-eye"></i></button></td>
-                                <td><a class="btn btn-warning" href="#"><i class="fa-solid fa-forward-step"></i></a></td>
-                                <td><a class="btn btn-danger" href="#"><i class="fa-solid fa-trash"></i></a></td>
+                                <td>{{ pubInfo.autorPublicacion.username }}</td>
+                                <td>{{ pubInfo.titulo }}</td>
+                                <td><button data-bs-toggle="modal" id="{{ pubInfo.id }}" onclick="devolverPub(this.id)" data-bs-target="#detallePub" class="btn btn-info"><i class="fa-solid fa-eye"></i></button></td>
+                                <td><a class="btn btn-danger" href="{% url 'app4:eliminarPub' pubInfo.id %}"><i class="fa-solid fa-trash"></i></a></td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -157,26 +155,29 @@
     </body>
 </html>
 
-<!--Nueva tarea-->
+<!--Nueva Publicacion Tweet-->
 <div class="modal fade" id="nuevaTarea" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="post" action="#">
+            <form method="post" action="{% url 'app4:crearPublicacion' %}">
+            {% csrf_token %}
                 <div class="modal-header">
-                    <h5 class="modal-title">Crear nueva tarea</h5>
+                    <h5 class="modal-title">Crear nueva publicacion</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row form-group justify-content-around mb-3">
-                        <div class="col-5">
-                            <label>Nombre de la tarea</label>
-                            <input class="form-control" type="text" name="nombreTarea" required>
+                        <div class="col-12">
+                            <label>Titulo</label>
+                            <input class="form-control" type="text" name="tituloPub" required>
                         </div>
+                        <!--
                         <div class="col-5">
                             <label>Responsable de la tarea</label>
                             <select class="form-select" name="responsableTarea" required></select>
-                        </div>
+                        </div>-->
                     </div>
+                    <!--
                     <div class="row form-group justify-content-around mb-3">
                         <div class="col-5">
                             <label>Fecha de inicio</label>
@@ -186,11 +187,11 @@
                             <label>Fecha de finalizacion</label>
                             <input class="form-control" type="date" required name="fechaFin">
                         </div>
-                    </div>
+                    </div>-->
                     <div class="row form-group justify-content-around mb-3">
-                        <div class="col-11">
-                            <label>Descripcion de la tarea</label>
-                            <textarea class="form-control" type="text" required rows="4" name="descripcionTarea"></textarea>
+                        <div class="col-12">
+                            <label>Descripcion de la publicacion</label>
+                            <textarea class="form-control" type="text" required rows="4" name="descripcionPub"></textarea>
                         </div>
                     </div>
                 </div>
@@ -203,38 +204,34 @@
     </div>
 </div>
 
-<!--Detalle tarea-->
-<div class="modal fade" id="detalleTarea" data-bs-backdrop="static" data-bs-keyboard="false">
+<!--Detalle Tweet-->
+<div class="modal fade" id="detallePub" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Detalle de la tarea</h5>
+                <h5 class="modal-title">Detalle de la publicacion</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h1 style="display: none;" id="indTarea"></h1>
+                <h1 style="display: none;" id="idPublicacion"></h1>
                 <div class="row form-group justify-content-around mb-3">
-                    <div class="col-4">
-                        <label>Fecha de inicio</label>
-                        <input class="form-control" type="text" readonly id="fechaInicioDetalle">
+                    <div class="col-8">
+                        <label>Titulo</label>
+                        <input class="form-control" type="text" readonly id="tituloPub">
                     </div>
                     <div class="col-4">
-                        <label>Fecha de finalizacion</label>
-                        <input class="form-control" type="text" readonly id="fechaFinDetalle">
-                    </div>
-                    <div class="col-4">
-                        <label>Estado de tarea</label>
-                        <input class="form-control" type="text" readonly id="estadoTareaDetalle">
+                        <label>Autor</label>
+                        <input class="form-control" type="text" readonly id="autorPub">
                     </div>
                 </div>
                 <div class="row form-group justify-content-around mb-3">
                     <div class="col-12">
-                        <label>Descripcion de la tarea</label>
-                        <textarea class="form-control" type="text" rows="4" readonly id="descripcionTareaDetalle"></textarea>
+                        <label>Contenido de la publicacion</label>
+                        <textarea class="form-control" type="text" rows="4" readonly id="descripcionPub"></textarea>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12" id="comentariosTareaTotales">
+                    <div class="col-12" id="comentariosTotales">
                         <div class="row mb-3">
                             <div class="col-3">
                                 Nombre Usuario
@@ -266,7 +263,7 @@
                         <input class="form-control" type="text" id="comentarioUsuario">
                     </div>
                     <div class="col-2">
-                        <button class="btn btn-info">Comentar</button>
+                        <button class="btn btn-info" onclick="enviarComentario()">Comentar</button>
                     </div>
                 </div>
             </div>
